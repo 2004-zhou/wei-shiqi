@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深天使 · 魏世奇 · 工作站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#F9F8F3',      /* 仿真格基金米色背景 */
+                            card: '#FFFFFF',    /* 卡片纯白 */
+                            primary: '#2C2A29', /* 深灰黑文字 */
+                            secondary: '#7A746F',/* 灰褐色次要文本 */
+                            accent: '#8C7E6C',   /* 选中/高亮金褐色 */
+                            border: '#EAE7E1'   /* 浅米色边框 */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #F9F8F3;
+            color: #2C2A29;
+            scroll-behavior: smooth;
+        }
+        /* 隐藏滚动条但保持功能 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-brand-bg text-brand-primary antialiased">
+
+<div id="app" class="flex min-h-screen relative">
+
+    <aside class="w-64 bg-brand-bg border-r border-brand-border fixed h-screen top-0 left-0 hidden md:flex flex-col justify-between p-8 z-30">
+        <div>
+            <div class="mb-12 cursor-pointer" @click="scrollToSection('hero')">
+                <h1 class="text-xl font-bold tracking-wider text-brand-primary">深天使 · 魏世奇</h1>
+                <p class="text-xs tracking-widest text-brand-accent mt-1 uppercase">WORKSTATION</p>
+            </div>
+            <nav class="space-y-6">
+                <a @click="scrollToSection('hero')" :class="activeSection === 'hero' ? 'text-brand-accent font-medium' : 'text-brand-secondary hover:text-brand-primary'" class="block text-sm tracking-wide cursor-pointer transition-colors duration-200">首页</a>
+                <a @click="scrollToSection('structure')" :class="activeSection === 'structure' ? 'text-brand-accent font-medium' : 'text-brand-secondary hover:text-brand-primary'" class="block text-sm tracking-wide cursor-pointer transition-colors duration-200">企业结构</a>
+                <a @click="switchTabAndScroll('invested')" :class="activeSection === 'projects' && activeTab === 'invested' ? 'text-brand-accent font-medium' : 'text-brand-secondary hover:text-brand-primary'" class="block text-sm tracking-wide cursor-pointer transition-colors duration-200">已投项目</a>
+                <a @click="switchTabAndScroll('pending')" :class="activeSection === 'projects' && activeTab === 'pending' ? 'text-brand-accent font-medium' : 'text-brand-secondary hover:text-brand-primary'" class="block text-sm tracking-wide cursor-pointer transition-colors duration-200">已拿份额·暂未落地</a>
+                <a @click="switchTabAndScroll('focus')" :class="activeSection === 'projects' && activeTab === 'focus' ? 'text-brand-accent font-medium' : 'text-brand-secondary hover:text-brand-primary'" class="block text-sm tracking-wide cursor-pointer transition-colors duration-200">重点关注项目</a>
+                <a @click="scrollToSection('about')" :class="activeSection === 'about' ? 'text-brand-accent font-medium' : 'text-brand-secondary hover:text-brand-primary'" class="block text-sm tracking-wide cursor-pointer transition-colors duration-200">关于我们</a>
+            </nav>
+        </div>
+        <div class="text-xs text-brand-secondary tracking-tight">
+            <p>© 2026 深天使 · 魏世奇工作站</p>
+            <p class="mt-1 text-[10px] opacity-60">Focus on AI & Advanced Tech</p>
+        </div>
+    </aside>
+
+    <header class="md:hidden w-full bg-brand-bg/90 backdrop-blur fixed top-0 left-0 border-b border-brand-border z-40 px-6 py-4 flex justify-between items-center">
+        <span class="font-bold text-sm tracking-wide">深天使 · 魏世奇工作站</span>
+        <div class="flex space-x-4 text-xs">
+            <span @click="scrollToSection('structure')" class="text-brand-secondary">结构</span>
+            <span @click="scrollToSection('projects')" class="text-brand-accent font-medium">项目库</span>
+        </div>
+    </header>
+
+    <main class="flex-1 md:ml-64 px-6 md:px-16 pt-20 md:pt-0 max-w-7xl mx-auto w-full transition-all duration-300">
+
+        <section id="hero" class="min-h-screen flex flex-col justify-center py-20 border-b border-brand-border/60">
+            <div class="max-w-3xl">
+                <span class="text-xs font-bold tracking-widest text-brand-accent uppercase bg-brand-accent/10 px-3 py-1 rounded-full">深天使管理基金</span>
+                <h1 class="text-4xl md:text-6xl font-light tracking-tight text-brand-primary mt-6 mb-4">
+                    深天使 · 魏世奇 · 工作站
+                </h1>
+                <p class="text-lg md:text-xl text-brand-secondary font-light leading-relaxed mb-12 tracking-wide">
+                    专注人工智能 · 半导体 · 新型显示 · 量子信息 · 先进制造 · 低空经济
+                </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <button @click="switchTabAndScroll('invested')" 
+                            class="px-8 py-3 rounded-full border border-brand-primary text-sm tracking-wider transition-all duration-300 hover:bg-brand-primary hover:text-brand-bg shadow-sm hover:shadow-md">
+                        已投项目库
+                    </button>
+                    <button @click="switchTabAndScroll('pending')" 
+                            class="px-8 py-3 rounded-full border border-brand-secondary text-sm tracking-wider transition-all duration-300 hover:border-brand-primary hover:text-brand-primary text-brand-secondary hover:bg-brand-card shadow-sm">
+                        已拿份额 · 暂未落地
+                    </button>
+                    <button @click="switchTabAndScroll('focus')" 
+                            class="px-8 py-3 rounded-full border border-brand-secondary text-sm tracking-wider transition-all duration-300 hover:border-brand-primary hover:text-brand-primary text-brand-secondary hover:bg-brand-card shadow-sm">
+                        重点关注项目
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="structure" class="py-24 border-b border-brand-border/60">
+            <div class="mb-12">
+                <h2 class="text-xs tracking-widest text-brand-accent uppercase font-bold">STRUCTURE</h2>
+                <h3 class="text-2xl font-light mt-2">企业基金结构</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-brand-card p-8 rounded-2xl border border-brand-border shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <h4 class="text-lg font-medium">天使一号</h4>
+                            <span class="text-xs bg-brand-bg px-2.5 py-1 rounded text-brand-secondary font-medium">2021年12月</span>
+                        </div>
+                        <p class="text-xs text-brand-secondary mb-4">管理方：深天使管理</p>
+                        <p class="text-sm text-brand-secondary leading-relaxed">只能投合作子基金已投项目 + 深圳本地落地项目。</p>
+                    </div>
+                    <div class="mt-8 pt-4 border-t border-brand-bg flex items-baseline">
+                        <span class="text-2xl font-light text-brand-primary">3亿</span>
+                        <span class="text-xs text-brand-secondary ml-1">总规模</span>
+                    </div>
+                </div>
+                <div class="bg-brand-card p-8 rounded-2xl border border-brand-border shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <h4 class="text-lg font-medium">天使二号</h4>
+                            <span class="text-xs bg-brand-bg px-2.5 py-1 rounded text-brand-secondary font-medium">2025年8月</span>
+                        </div>
+                        <p class="text-xs text-brand-secondary mb-4">管理方：深天使管理</p>
+                        <p class="text-sm text-brand-secondary leading-relaxed">只能投合作子基金已投项目 + 深圳本地落地项目。</p>
+                    </div>
+                    <div class="mt-8 pt-4 border-t border-brand-bg flex items-baseline">
+                        <span class="text-2xl font-light text-brand-primary">3亿</span>
+                        <span class="text-xs text-brand-secondary ml-1">总规模</span>
+                    </div>
+                </div>
+                <div class="bg-brand-card p-8 rounded-2xl border border-brand-border shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <h4 class="text-lg font-medium">联创一期</h4>
+                            <span class="text-xs bg-brand-bg px-2.5 py-1 rounded text-brand-secondary font-medium">2025年3月</span>
+                        </div>
+                        <p class="text-xs text-brand-secondary mb-4">管理方：深天使 - 启迪合作管理</p>
+                        <p class="text-sm text-brand-secondary leading-relaxed">专为布局、挖掘极早期/种子期项目而设立的专项直投联动基金。</p>
+                    </div>
+                    <div class="mt-8 pt-4 border-t border-brand-bg flex items-baseline">
+                        <span class="text-xs bg-brand-accent/20 text-brand-accent px-2 py-0.5 rounded font-medium">极早期种子仓</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-24 border-b border-brand-border/60">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
+                <div>
+                    <h2 class="text-xs tracking-widest text-brand-accent uppercase font-bold">PORTFOLIO</h2>
+                    <h3 class="text-2xl font-light mt-2">项目中心</h3>
+                </div>
+                <div class="flex bg-brand-border/40 p-1 rounded-full self-start md:self-auto">
+                    <button @click="activeTab = 'invested'" :class="activeTab === 'invested' ? 'bg-brand-card text-brand-primary font-medium shadow-sm' : 'text-brand-secondary'" class="px-5 py-2 text-xs tracking-wider rounded-full transition-all duration-200">
+                        已投项目 ({{ investedProjects.length }})
+                    </button>
+                    <button @click="activeTab = 'pending'" :class="activeTab === 'pending' ? 'bg-brand-card text-brand-primary font-medium shadow-sm' : 'text-brand-secondary'" class="px-5 py-2 text-xs tracking-wider rounded-full transition-all duration-200">
+                        已拿份额·暂未落地 ({{ pendingProjects.length }})
+                    </button>
+                    <button @click="activeTab = 'focus'" :class="activeTab === 'focus' ? 'bg-brand-card text-brand-primary font-medium shadow-sm' : 'text-brand-secondary'" class="px-5 py-2 text-xs tracking-wider rounded-full transition-all duration-200">
+                        重点关注 ({{ focusProjects.length }})
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div v-for="project in currentProjectList" 
+                     :key="project.name"
+                     @click="openModal(project)"
+                     class="group bg-brand-card border border-brand-border p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between h-44">
+                    
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div class="w-10 h-10 bg-brand-bg rounded-lg flex items-center justify-center font-bold text-brand-accent group-hover:bg-brand-primary group-hover:text-brand-bg transition-colors duration-300">
+                                {{ project.name.substring(0,2) }}
+                            </div>
+                            <span class="text-[10px] bg-brand-bg px-2 py-0.5 rounded text-brand-secondary tracking-tight">
+                                {{ project.tag.split('-')[1] || project.tag }}
+                            </span>
+                        </div>
+                        <h4 class="text-base font-semibold text-brand-primary mt-4 tracking-wide group-hover:text-brand-accent transition-colors">
+                            {{ project.name }}
+                        </h4>
+                    </div>
+                    
+                    <div class="mt-2 border-t border-brand-bg pt-2 flex items-center justify-between">
+                        <span class="text-xs text-brand-secondary truncate max-w-[80%]">{{ project.highlight }}</span>
+                        <svg class="w-3 h-3 text-brand-secondary group-hover:text-brand-primary transform group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-24">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-xs tracking-widest text-brand-accent uppercase font-bold">ABOUT STATION</h2>
+                    <h3 class="text-2xl font-light mt-2 mb-6">关于深天使魏世奇工作站</h3>
+                    <p class="text-brand-secondary text-sm leading-relaxed mb-4">
+                        作为深天使团队的核心科技探索节点，我们致力于通过前沿的学术转化与极早期硬科技孵化，架起科学家实验室与商业战场的桥梁。
+                    </p>
+                    <p class="text-brand-secondary text-sm leading-relaxed">
+                        深度链接清华大学、北京大学、香港大学、南方科技大学、港中深等顶级学术研究阵地。在人工智能算力、光学超表面材料、具身智能及空间智飞等板块进行地毯式布局。
+                    </p>
+                </div>
+                <div class="bg-brand-card border border-brand-border p-8 rounded-2xl">
+                    <h4 class="text-sm font-medium mb-4">工作站重点赛道雷达</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-brand-bg px-3 py-1.5 rounded-full text-brand-primary"># 稀疏化AI算力芯片</span>
+                        <span class="text-xs bg-brand-bg px-3 py-1.5 rounded-full text-brand-primary"># 光学超表面波导</span>
+                        <span class="text-xs bg-brand-bg px-3 py-1.5 rounded-full text-brand-primary"># 柔性空间具身机械臂</span>
+                        <span class="text-xs bg-brand-bg px-3 py-1.5 rounded-full text-brand-primary"># 虚拟细胞AI4S</span>
+                        <span class="text-xs bg-brand-bg px-3 py-1.5 rounded-full text-brand-primary"># 高速低空空间智能</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div v-if="isModalOpen" class="fixed inset-0 bg-brand-primary/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-brand-card w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col md:flex-row animate-in fade-in zoom-in-95 duration-200">
+            
+            <button @click="closeModal" class="absolute top-4 right-4 text-brand-secondary hover:text-brand-primary z-10 p-1 bg-brand-bg/50 rounded-full backdrop-blur-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="w-full md:w-2/5 bg-brand-bg p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-brand-border">
+                <div class="text-center md:text-left mt-4">
+                    <div class="w-16 h-16 bg-brand-card border border-brand-border rounded-xl flex items-center justify-center font-bold text-xl text-brand-accent mx-auto md:mx-0 shadow-sm">
+                        {{ selectedProject.name.substring(0,2) }}
+                    </div>
+                    <h3 class="text-xl font-bold text-brand-primary mt-4">{{ selectedProject.name }}</h3>
+                    <span class="inline-block text-xs bg-brand-accent/10 text-brand-accent font-medium px-2.5 py-1 rounded mt-2">
+                        {{ selectedProject.tag }}
+                    </span>
+                </div>
+
+                <div class="mt-8 text-center md:text-left">
+                    <div class="w-24 h-24 bg-brand-card border border-brand-border p-2 rounded-lg inline-block shadow-inner">
+                        <div class="w-full h-full bg-slate-100 flex flex-col items-center justify-center text-[9px] text-brand-secondary">
+                            <span>QR Code</span>
+                            <span>项目直达</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="#" class="inline-block w-full text-center bg-brand-primary text-brand-bg text-xs tracking-wider py-2.5 rounded-lg hover:bg-brand-accent transition-colors shadow">
+                            进入企业官网 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full md:w-3/5 p-8 overflow-y-auto no-scrollbar max-h-[50vh] md:max-h-[80vh]">
+                <div class="space-y-6">
+                    <div>
+                        <h5 class="text-xs font-bold tracking-widest text-brand-accent uppercase mb-2">核心亮点</h5>
+                        <p class="text-sm font-medium text-brand-primary leading-relaxed bg-brand-bg/50 p-3 rounded-lg border-l-2 border-brand-accent">
+                            {{ selectedProject.highlight }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <h5 class="text-xs font-bold tracking-widest text-brand-accent uppercase mb-2">公司全貌</h5>
+                        <p class="text-sm text-brand-secondary leading-relaxed">
+                            {{ selectedProject.description }}
+                        </p>
+                    </div>
+
+                    <div v-if="selectedProject.team">
+                        <h5 class="text-xs font-bold tracking-widest text-brand-accent uppercase mb-2">团队图谱</h5>
+                        <p class="text-sm text-brand-secondary leading-relaxed">
+                            {{ selectedProject.team }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <h5 class="text-xs font-bold tracking-widest text-brand-accent uppercase mb-2">顶级资方与份额</h5>
+                        <div class="text-xs text-brand-primary leading-relaxed bg-brand-bg p-3 rounded-lg border border-brand-border">
+                            {{ selectedProject.investors }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+
+    createApp({
+        setup() {
+            // 页签与高亮导航定义
+            const activeTab = ref('invested');
+            const activeSection = ref('hero');
+            const isModalOpen = ref(false);
+            const selectedProject = ref({});
+
+            // 数据源一：已投项目数据池
+            const investedProjects = ref([
+                { name: '云豹智能', tag: 'IPO申报中 / 人工智能-算力', highlight: '国产DPU第一股/近两年业绩增长迅速', investors: '腾讯、红杉、深创投、IDG、五源、基石等 + 天使二号(2025)', description: '专注云计算和数据中心DPU芯片与解决方案，2020年萧启阳博士创立，打造"软件定义芯片"行业标准。', team: '核心团队来自Broadcom、Intel、Arm、阿里等全球行业巨头。' },
+                { name: '墨芯人工智能', tag: 'Pre-IPO / 人工智能-算力', highlight: '深圳唯一GPU/近两年业绩增长迅速', investors: '蚂蚁、深创投、基石、华大松禾、同威等 + 天使一号(2022)', description: '双稀疏化算法全球专利，突破AI算力瓶颈，重塑AI芯片2.0时代能效比。', team: '团队核心成员主要来自卡内基梅隆大学、Intel、Marvell、Oracle等知名学府与芯片企业。' },
+                { name: '锐视智芯', tag: 'Pre-IPO / 人工智能-传感器', highlight: 'HVS融合技术全球领先/近两年业绩增长迅速', investors: '华为、舜宇、虹软、中科创星、海康、同创伟业等 + 天使一号(2022)', description: '全球领先HVS融合视觉感知技术，单芯片实现图像与事件感知，为下一代高阶AI提供极高效率的视觉感知输入。', team: '具备深厚芯片研发基础和多年商业落地经验。' },
+                { name: '数创弧光', tag: '天使 / 人工智能-数据合成', highlight: 'IDEA孵化/大语言模型数据合成/面向海外场景', investors: '哈勃、英诺、君联等 + 联创一期(2025)、天使二号(2026)', description: '知识驱动型合成数据研发。覆盖预训练、微调全链条，核心产品包括Living KB与SynData Platform，精细对标中东及海外金融、制造大户。', team: '粤港澳大湾区数字经济研究院(IDEA)顶尖团队孵化催化。' },
+                { name: '大乙半导体', tag: '天使 / 新材料-半导体', highlight: '香港大学孵化/半导体铜键合材料', investors: '中科创星、英诺、基石等 + 天使二号(2025)', description: '专注于第三代半导体先进封装与热管理核心材料。拥有全球独有的固态铜烧结颠覆技术，全面服务于高算力服务器与新能源低空器件。', team: '香港大学技术转化团队，国际知名微电子与材料科学家组建。' },
+                { name: '手亿科技', tag: '天使 / 人工智能-数采交互', highlight: '清华大学孵化/人机交互+数据采集', investors: '英诺、力合等 + 联创一期(2025)、天使二号(2025)', description: '基于高精度视觉与IMU融合算法的智能腕带，专为XR及具身智能提供底层手部操作数据资产，有效解决机器人模仿学习瓶颈。', team: '清华大学孵化团队，深耕人机交互与空间计算。' },
+                { name: '光启之境', tag: '天使 / 人工智能-智能终端', highlight: '小米高管创业/图像模型+Agent+终端', investors: '顺为、正轩、英诺、鼎晖、弘晖等 + 天使二号(2025)', description: '新型AI智能影像终端及软硬结合产品，大幅拉低新世代影像创作门槛。', team: '创始人为小米11年资深核心高管，具备极强的软硬件供应链管理与落地基因。' },
+                { name: '墨思维尔', tag: '天使 / 新材料-智能终端上游', highlight: '南科大转化/超表面光波导/AR核心器件', investors: '深创投、力合、南科大等 + 联创一期(2025)', description: '2025年设立。凭借前沿超表面核心技术全面突破全彩AR显示，2026年重点加速Pre-A轮推进与中试产线落地。', team: '南方科技大学教授、光电材料实验室科研成果产业化。' },
+                { name: '追引光学', tag: '种子 / 人工智能-工业软件', highlight: '南科大转化/光学仿真软件/海外对标', investors: '松禾创新 + 联创一期(2025)', description: '高精度光学全场景仿真核心软件体系。自研LEDA仿真核心工具已处于公测阶段，集成前沿大模型AI接口。', team: '南方科技大学顶级光学研究组技术成果转化。' },
+                { name: '量视科技', tag: '种子 / 先进制造-智能终端上游', highlight: '南科大转化/量子点微显示光机', investors: '联创一期(2025)', description: 'µQLED微显示光机创新研发。已实现0.26英寸单色产品点亮，同步联合下游大厂合作开发全新轻量化智能眼镜。', team: '南方科技大学微电子技术顶尖骨干力量。' },
+                { name: '璨辰科技', tag: '天使 / 人工智能-AI4S', highlight: '清华+斯坦福团队/AI+生命科学', investors: '东方富海 + 联创一期(2025)、启迪、松禾、零以等', description: '全球首创虚拟细胞器官智能体系统，旨在从全分子底座层面全面重塑生物医药研发和细胞工程制备全路径。', team: '由清华大学、斯坦福大学海归跨学科青年科学家联合创办。' },
+                { name: '奥术造物', tag: '种子 / 人工智能-AI终端', highlight: '海外成熟市场AI终端/科创学院明星队', investors: '极客公园、松禾创新 + 联创一期(2026)', description: '精准切入海外DND（龙与地下城）跑团娱乐以及国内强互动剧本杀垂直场景的专用AI智能终端模组。', team: '深圳科创学院孵化之明星团队，具有高爆发的敏捷软硬件开发能力。' },
+                { name: '词元嵌入', tag: '种子 / 人工智能-AI服务', highlight: 'GEO团队/服务海内外一线品牌', investors: '联创一期(2025)', description: '国内顶尖AI商业落地赋能平台。目前已正式签约服务奇富金融、海尔集团、罗技电子、林氏家居等头部标杆品牌。', team: '顶尖大模型算法专家与知名增长GEO团队深度融合。' }
+            ]);
+
+            // 数据源二：已拿份额·暂未落地数据池
+            const pendingProjects = ref([
+                { name: '安菲翁科技', tag: '投不出 / 人工智能-语音合成', highlight: '港中深孵化/大湾区语音生成第一梯队', investors: '哈勃、高新投、银杏谷 (项目方仅提供深天使份额)', description: '极高拟真度的AI语音合成服务与数字人音频基座，核心独占技术主要聚焦在深度伪造鉴伪防御。', team: '香港中文大学（深圳）重点实验室成果转化。' },
+                { name: '智子芯元', tag: '投不出 / 人工智能-算力优化', highlight: '港中深孵化/专供国产+华为生态', investors: '真格、英诺、松禾 (项目方仅开放深天使份额)', description: '独创的AI与高级数学算法融合算子自动化优化部署平台，极大摆脱复杂硬件人工迁移重构依赖。', team: '港中深数学科学与智能工程跨学科领军技术团队。' },
+                { name: 'Apex Context', tag: '推进中 / 人工智能-视频Agent', highlight: '生数科技VP创立/对标Pollo AI', investors: '达泰（要求快速交割/二期款待落位）', description: '高拟真度智能视频生成与Agent工厂平台Pexo已正式全量上线，具备强大的高维长视频一致性逻辑控制。', team: '创始人为知名多模态大模型生数科技前核心VP，实战经验丰富。' },
+                { name: '正元量子', tag: '首轮未进 / 量子信息-量子计算', highlight: '中科大+南科大团队/量子计算水下项目', investors: '深创投、中芯聚源等 (投委存技术疑问)', description: '独创量子三维集成芯片制备与操控技术。深耕下一代高保真超导量子实验室系统搭建。', team: '由祖冲之号核心总师弟子以及腾讯超导量子实验室联合创始人深度发起。' }
+            ]);
+
+            // 数据源三：重点关注项目数据池
+            const focusProjects = ref([
+                { name: '鼎犀智创', tag: '人工智能-AI4S', highlight: '材料研发大模型Agent系统', investors: '上海未来先导、晶泰、元生、昆仲', description: '精心打造Rhino AI数字科学家系统，全流程服务面向新能源电池、先进半导体及航空航天复合材料领域的研发试验模拟。', team: '北京大学常务副校长、中国科学院院士张锦老师亲自发起。' },
+                { name: '思博威视', tag: '人工智能-AI终端', highlight: '高频运动场景私人影像教练', investors: '高瓴资本、Insta360', description: '专为高难度高频运动打造的AI视觉运动解析系统，能够无感自动切片、捕捉动作细节并高光高精集锦。', team: '深圳科创学院高保真孵化项目。' },
+                { name: '大览科技', tag: '人工智能-AI终端', highlight: '海康萤石前负责人创办/远距离影像', investors: '红杉中国、明势资本', description: '基于新一代自研多模态AI硬件的超远距离智能视觉终端。', team: '海康威视旗下萤石核心业务前一线大厂最高负责人领衔创办，拥有成熟的年销数十亿级别供应链闭环经验。' },
+                { name: '星域蔚蓝', tag: '人工智能-AI终端', highlight: '深潜场景高硬度AI终端', investors: '华山资本、初心资本', description: '专门针对极限水下、潜水场景打造的AI多维度综合音视频运动交互及保障设备。', team: '哈尔滨工业大学、东南大学、香港科技大学跨国交叉极客团队。' },
+                { name: '卫澜深海', tag: '人工智能-具身智能', highlight: '超级蛙人水下直行直取具身平台', investors: '英诺天使基金', description: '深水特种作业具身机器人。能够在极高压、零能见度多变海况下完成高精焊接与探伤。指标超越精英人类蛙人。', team: '西安交通大学特种机器人工程中心硬核班底。' },
+                { name: '知有无界', tag: '人工智能-具身智能', highlight: '特种船舶喷涂/太空柔性机械臂', investors: '卓源亚洲、松禾资本、力合创投', description: '主攻大规模钢结构表面特种喷涂以及近地轨道柔性特种太空具身多模态控制系统。', team: '清华大学航天航空及自动化系校友骨干团队。' },
+                { name: 'SuperLiDar', tag: '低空经济-空间智能', highlight: '超高速20m/s避障飞行智能体', investors: '头部港资机构', description: '自研安全无感超高速低空飞行避障平台。可在时速超20米/秒状态下，纯依靠机载视觉与算力实时避开2.5mm细微电线与树枝。', team: '香港大学资深工程教授与流形空间创始人导师联合推进。' },
+                { name: '速竞创新', tag: '人工智能-AI终端', highlight: '西交大RoboMaster冠军队长创立/FPV赛车', investors: '松禾创投等', description: '集成超精物理级高真运动仿真舱以及专业模拟电竞技赛道的FPV沉浸式全竞速赛车网络生态。', team: '西安交通大学RoboMaster全国最高总冠军队长创办。' }
+            ]);
+
+            // 根据当前激活的标签卡片自动过滤输出
+            const currentProjectList = computed(() => {
+                if (activeTab.value === 'invested') return investedProjects.value;
+                if (activeTab.value === 'pending') return pendingProjects.value;
+                return focusProjects.value;
+            });
+
+            // 路由控制方法：点击核心按钮时，同步切换标签页并平滑滚动到相应锚点
+            const switchTabAndScroll = (tabName) => {
+                activeTab.value = tabName;
+                scrollToSection('projects');
+            };
+
+            // 滚动到锚点
+            const scrollToSection = (id) => {
+                activeSection.value = id === 'projects' ? 'projects' : id;
+                const el = document.getElementById(id);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+
+            // 弹窗状态管理
+            const openModal = (project) => {
+                selectedProject.value = project;
+                isModalOpen.value = true;
+                document.body.style.overflow = 'hidden'; // 锁定底层背景滚动
+            };
+
+            const closeModal = () => {
+                isModalOpen.value = false;
+                document.body.style.overflow = '';
+            };
+
+            // 监听页面滚动自动高亮侧边栏导航项
+            const handleScroll = () => {
+                const sections = ['hero', 'structure', 'projects', 'about'];
+                const scrollPosition = window.scrollY + 200;
+
+                for (const section of sections) {
+                    const el = document.getElementById(section);
+                    if (el) {
+                        const top = el.offsetTop;
+                        const height = el.offsetHeight;
+                        if (scrollPosition >= top && scrollPosition < top + height) {
+                            activeSection.value = section;
+                            break;
+                        }
+                    }
+                }
+            };
+
+            onMounted(() => {
+                window.addEventListener('scroll', handleScroll);
+            });
+
+            onUnmounted(() => {
+                window.removeEventListener('scroll', handleScroll);
+            });
+
+            return {
+                activeTab,
+                activeSection,
+                investedProjects,
+                pendingProjects,
+                focusProjects,
+                currentProjectList,
+                isModalOpen,
+                selectedProject,
+                switchTabAndScroll,
+                scrollToSection,
+                openModal,
+                closeModal
+            };
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>
